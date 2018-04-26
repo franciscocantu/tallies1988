@@ -1,0 +1,4 @@
+#Build the validation set. I randomly take 150 pictures from each category 
+python /Replication/CNN Model/Code/random_select.py /Replication/CNN Model/Sets/TrainingSets/Clean /Replication/CNN Model/Sets/ValidationSets/Clean 75
+
+python /Replication/CNN Model/Code/random_select.py /Replication/CNN Model/Sets/TrainingSets/Fraud /Replication/CNN Model/Sets/ValidationSets/Fraud 75
