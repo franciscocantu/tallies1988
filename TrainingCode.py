@@ -22,9 +22,6 @@ import os
 #to python. things like vectors, matrices, linear algebra, integrals, etc.
 import numpy as np
 
-#h5py helps us to load weights
-#Opuntia cluster didn't need this library
-#import h5py   
 
 # Change the image size to 227x227. 
 # Accuracy is much higher for squared images. 
@@ -40,7 +37,7 @@ nb_validation_samples = 150 # number of samples in the validation set
 nb_epoch = 250 # how many epochs to train for. We are loading existing weights.
 # so not needed unless training on new data
 
-window_sz = 5 # how many pixels is the window that slides across the image is
+window_sz = 3 # how many pixels is the window that slides across the image is
 
 # this will initiate a sequential backpropagation network
 model = Sequential() 
@@ -108,9 +105,9 @@ model.add(Dropout(0.2))
 #now we take the output which is a square and turn it into a 1D vector
 model.add(Flatten())
 
-#now that we have a vector we can put into a vector of 2048 Rectified Linear Units
+#now that we have a vector we can put into a vector of 4096 Rectified Linear Units
 #so so the final conclusion can be made
-model.add(Dense(2048))
+model.add(Dense(4096))
 BatchNormalization()
 model.add(Activation('elu'))
 model.add(Dropout(0.3))
@@ -122,10 +119,6 @@ model.add(Dropout(0.5))
 model.add(Dense(1))
 BatchNormalization()
 model.add(Activation('sigmoid'))
-
-#what we do here is populate the models with the weights I previously learned (just in case of fine-tuning the model)
-
-#model.load_weights('weightsV3d.best.hdf5')
 
 #now the network is created.
 model.compile(loss='binary_crossentropy',
@@ -155,23 +148,23 @@ test_datagen = ImageDataGenerator(rescale=1./255,
 history = History()
 
 # checkpoint
-filepath="weightsS10a.best.h5"
-checkpoint = ModelCheckpoint(filepath, monitor='val_loss', verbose=1, save_best_only=True, mode='min')
-callbacks_list = [checkpoint, history]
+#filepath="weightsS10a.best.h5"
+#checkpoint = ModelCheckpoint(filepath, monitor='val_loss', verbose=1, save_best_only=True, mode='min')
+#callbacks_list = [checkpoint, history]
 
 #so to train the model I uncomment the followinf
-#train_generator = train_datagen.flow_from_directory(
-#        train_data_dir,
-#        target_size=(img_width, img_height),
-#        batch_size=16,
-#        class_mode='binary')
+train_generator = train_datagen.flow_from_directory(
+        train_data_dir,
+        target_size=(img_width, img_height),
+        batch_size=16,
+        class_mode='binary')
 
 # uncomment this to validate on the test set 
-#validation_generator = test_datagen.flow_from_directory(
-#        validation_data_dir,
-#        target_size=(img_width, img_height),
-#        batch_size=16,
-#        class_mode='binary')
+validation_generator = test_datagen.flow_from_directory(
+        validation_data_dir,
+        target_size=(img_width, img_height),
+        batch_size=16,
+        class_mode='binary')
 
 # this is where you train or fit the data, this line actually executes it.
 model.fit_generator(
